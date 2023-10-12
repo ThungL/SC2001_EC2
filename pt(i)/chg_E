@@ -1,5 +1,6 @@
 import random
 import time
+from statistics import mean
 
 
 def extract_min(Q, dist):
@@ -62,6 +63,7 @@ def dijkstra_shortest_path(adj_matrix, source):
 
 run_num = 1
 timeList = []
+time_to_calculate_mean = []
 
 graph = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -79,47 +81,36 @@ graph = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-edge = 0
+edge = 14
+max_edge = 210
 
 while True:
-    if edge == 13:
-        break
-    else:
-        A = random.randint(0, 14)
-        B = random.randint(0, 14)
-        if A == B or graph[A][B] != 0:
-            continue
-        else:
-            graph[A][B] = random.randint(1, 10)
-            edge += 1
-
-while True:
-    if run_num == 197:
-        print("done")
+    if edge > max_edge:
         print(timeList)
         break
-    A = random.randint(0, 14)
-    B = random.randint(0, 14)
-    if A == B or graph[A][B] != 0:
-        continue
-    else:
+    for repeat in range(50):
+        for i in range(edge):
+            A = random.randint(0, 14)
+            B = random.randint(0, 14)
+            if A == B or graph[A][B] != 0:
+                continue
+            else:
+                graph[A][B] = random.randint(1, 20)
         print("run", run_num)
-        run_num += 1
-        graph[A][B] = random.randint(1, 10)
-        edge += 1
-        print("num of edge: ", edge)
-        print("graph is ", graph)
+        print("edge num is ", edge)
         source_node = 0  # Node A
-        start = time.time_ns()
+        start = time.time()
         shortest_distances, predecessors = dijkstra_shortest_path(graph, source_node)
-        end = time.time_ns()
+        end = time.time()
         time_taken = end - start
-        timeList.append(time_taken)
+        time_to_calculate_mean.append(time_taken)
         print("Shortest distances from node", source_node, "to all nodes:")
         print(shortest_distances)
         print("Predecessors for shortest path:")
         print(predecessors)
-        print("graph is ", graph)
-        print(time_taken)
+        print("time taken is ", time_taken)
+    timeList.append(mean(time_to_calculate_mean))
+    edge += 1
+    run_num += 1
 
 

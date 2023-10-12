@@ -65,6 +65,7 @@ def dijkstra_shortest_path(adj_matrix, source):
 timeList = []
 time_to_calculate_mean = []
 max_vertices = 50
+vertex = 3
 # V = 3-30
 # Create 2D array of 3x3 to 30x30
 # E = V(V-1)/2
@@ -73,50 +74,41 @@ graph = [[0, 0, 0],
          [0, 0, 0],
          [0, 0, 0]]
 
-for num_of_v in range(28):
-    len_graph = len(graph)
-    print("length of graph is", len_graph)
-    for i in range(len(graph)-1):
-        graph[i][i + 1] = random.randint(1, 50)
-    num_totalEdges = (len_graph * (len_graph - 1))/2
-    num_extraEdges = num_totalEdges - len_graph + 1
-    print("number of extra edges is ", num_extraEdges)
-    edge_num = 0
-    while True:
-        if num_extraEdges < 0 or edge_num == int(num_extraEdges):
-            print("done")
-           # print(timeList)
+while True:
+    if vertex > max_vertices:
+        print(timeList)
+        break
+    num_edge = (vertex * (vertex - 1))/2
+    for repeat in range(50):
+        current_edge = 0
+        if current_edge == num_edge:
             break
-        A = random.randint(0, num_of_v + 2)
-        B = random.randint(0, num_of_v + 2)
-        if A == B or graph[A][B] != 0:
-            continue
-        else:
-            # print("edge", edge_num)
-            graph[A][B] = random.randint(1, 10)
-            edge_num += 1
-    source_node = 0  # Node A
-    '''start = time.time_ns()
-    shortest_distances, predecessors = dijkstra_shortest_path(graph, source_node)
-    end = time.time_ns()
-    time_taken = end - start
-    timeList.append(time_taken)
-    print("Shortest distances from node", source_node, "to all nodes:")
-    print(shortest_distances)
-    print("Predecessors for shortest path:")
-    print(predecessors)'''
-    print("graph is ", graph)
-   # print(time_taken)
+        for i in range(int(num_edge)):
+            A = random.randint(0, vertex - 1)
+            B = random.randint(0, vertex - 1)
+            if A == B or graph[A][B] != 0:
+                continue
+            else:
+                graph[A][B] = random.randint(1, 20)
+                current_edge += 1
+        source_node = 0  # Node A
+        start = time.time()
+        shortest_distances, predecessors = dijkstra_shortest_path(graph, source_node)
+        end = time.time()
+        time_taken = end - start
+        time_to_calculate_mean.append(time_taken)
+
     list_to_be_appended = []
-    for i in range(len_graph):
+    for i in range(vertex):
         graph[i].append(0)
-    for i in range(len_graph + 1):
+    for i in range(vertex + 1):
         list_to_be_appended.append(0)
     graph.append(list_to_be_appended)
-    print(graph)
-    for i in range(len_graph + 1):
-        for j in range(len_graph + 1):
+    for i in range(vertex + 1):
+        for j in range(vertex + 1):
             graph[i][j] = 0
-    print("initialise graph is", graph)
+    timeList.append(mean(time_to_calculate_mean))
+    vertex += 1
+
 
 

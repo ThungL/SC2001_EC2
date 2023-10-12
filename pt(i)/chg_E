@@ -1,0 +1,125 @@
+import random
+import time
+
+
+def extract_min(Q, dist):
+    # Find the vertex with the minimum distance in the priority queue Q
+    min_dist = float('inf')
+    min_vertex = None
+    for vertex in Q:
+        if dist[vertex] < min_dist:
+            min_dist = dist[vertex]
+            min_vertex = vertex
+    return min_vertex
+
+def dijkstra_shortest_path(adj_matrix, source):
+    num_nodes = len(adj_matrix)
+    d = {}
+    pi = {}
+    S = []
+    # Initialize data structures
+    for i in range(num_nodes):
+        d[i] = float('inf')
+        pi[i] = None
+        S.append(0)
+    # Set the distance from the source to itself as 0
+    d[source] = 0
+    pi[source] = source
+
+    # Priority queue to keep track of vertices
+    sorted_d = dict(sorted(d.items(), key=lambda item: item[1]))
+    Q = list(sorted_d.keys())
+    # print("Q is ", Q)
+
+
+    while Q:
+        # Extract the vertex with the smallest distance
+        u = extract_min(Q, d)
+       # print("u is ", u)
+        if u is None:
+            break
+        Q.remove(u)
+
+        # Mark u as part of set S
+        S[u] = 1
+
+        # Iterate over all vertices adjacent to u
+        for v in range(num_nodes):
+            if S[v] == 0 and d[v] > d[u] + adj_matrix[u][v] and adj_matrix[u][v] != 0:
+                # Update distance, predecessor, and continue with the next vertex
+                # print("v is ", v, "adj_matrix[u][v] is ", adj_matrix[u][v], "d[u] + adj_matrix[u][v] is ", d[u] + adj_matrix[u][v])
+                d[v] = d[u] + adj_matrix[u][v]
+                pi[v] = u
+                # print("d is ", d, ", pi is ", pi)
+                sorted_d = dict(sorted(d.items(), key=lambda item: item[1]))
+                Q = list(sorted_d.keys())
+
+    d_list = list(d.values())
+    pi_list = list(pi.values())
+
+    return d_list, pi_list
+
+
+run_num = 1
+timeList = []
+
+graph = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+edge = 0
+
+while True:
+    if edge == 13:
+        break
+    else:
+        A = random.randint(0, 14)
+        B = random.randint(0, 14)
+        if A == B or graph[A][B] != 0:
+            continue
+        else:
+            graph[A][B] = random.randint(1, 10)
+            edge += 1
+
+while True:
+    if run_num == 197:
+        print("done")
+        print(timeList)
+        break
+    A = random.randint(0, 14)
+    B = random.randint(0, 14)
+    if A == B or graph[A][B] != 0:
+        continue
+    else:
+        print("run", run_num)
+        run_num += 1
+        graph[A][B] = random.randint(1, 10)
+        edge += 1
+        print("num of edge: ", edge)
+        print("graph is ", graph)
+        source_node = 0  # Node A
+        start = time.time_ns()
+        shortest_distances, predecessors = dijkstra_shortest_path(graph, source_node)
+        end = time.time_ns()
+        time_taken = end - start
+        timeList.append(time_taken)
+        print("Shortest distances from node", source_node, "to all nodes:")
+        print(shortest_distances)
+        print("Predecessors for shortest path:")
+        print(predecessors)
+        print("graph is ", graph)
+        print(time_taken)
+
+

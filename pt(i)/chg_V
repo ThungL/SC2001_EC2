@@ -1,0 +1,122 @@
+import random
+import time
+from statistics import mean
+
+
+def extract_min(Q, dist):
+    # Find the vertex with the minimum distance in the priority queue Q
+    min_dist = float('inf')
+    min_vertex = None
+    for vertex in Q:
+        if dist[vertex] < min_dist:
+            min_dist = dist[vertex]
+            min_vertex = vertex
+    return min_vertex
+
+def dijkstra_shortest_path(adj_matrix, source):
+    num_nodes = len(adj_matrix)
+    d = {}
+    pi = {}
+    S = []
+    # Initialize data structures
+    for i in range(num_nodes):
+        d[i] = float('inf')
+        pi[i] = None
+        S.append(0)
+    # Set the distance from the source to itself as 0
+    d[source] = 0
+    pi[source] = source
+
+    # Priority queue to keep track of vertices
+    sorted_d = dict(sorted(d.items(), key=lambda item: item[1]))
+    Q = list(sorted_d.keys())
+    # print("Q is ", Q)
+
+
+    while Q:
+        # Extract the vertex with the smallest distance
+        u = extract_min(Q, d)
+       # print("u is ", u)
+        if u is None:
+            break
+        Q.remove(u)
+
+        # Mark u as part of set S
+        S[u] = 1
+
+        # Iterate over all vertices adjacent to u
+        for v in range(num_nodes):
+            if S[v] == 0 and d[v] > d[u] + adj_matrix[u][v] and adj_matrix[u][v] != 0:
+                # Update distance, predecessor, and continue with the next vertex
+                # print("v is ", v, "adj_matrix[u][v] is ", adj_matrix[u][v], "d[u] + adj_matrix[u][v] is ", d[u] + adj_matrix[u][v])
+                d[v] = d[u] + adj_matrix[u][v]
+                pi[v] = u
+                # print("d is ", d, ", pi is ", pi)
+                sorted_d = dict(sorted(d.items(), key=lambda item: item[1]))
+                Q = list(sorted_d.keys())
+
+    d_list = list(d.values())
+    pi_list = list(pi.values())
+
+    return d_list, pi_list
+
+
+
+timeList = []
+time_to_calculate_mean = []
+max_vertices = 50
+# V = 3-30
+# Create 2D array of 3x3 to 30x30
+# E = V(V-1)/2
+
+graph = [[0, 0, 0],
+         [0, 0, 0],
+         [0, 0, 0]]
+
+for num_of_v in range(28):
+    len_graph = len(graph)
+    print("length of graph is", len_graph)
+    for i in range(len(graph)-1):
+        graph[i][i + 1] = random.randint(1, 50)
+    num_totalEdges = (len_graph * (len_graph - 1))/2
+    num_extraEdges = num_totalEdges - len_graph + 1
+    print("number of extra edges is ", num_extraEdges)
+    edge_num = 0
+    while True:
+        if num_extraEdges < 0 or edge_num == int(num_extraEdges):
+            print("done")
+           # print(timeList)
+            break
+        A = random.randint(0, num_of_v + 2)
+        B = random.randint(0, num_of_v + 2)
+        if A == B or graph[A][B] != 0:
+            continue
+        else:
+            # print("edge", edge_num)
+            graph[A][B] = random.randint(1, 10)
+            edge_num += 1
+    source_node = 0  # Node A
+    '''start = time.time_ns()
+    shortest_distances, predecessors = dijkstra_shortest_path(graph, source_node)
+    end = time.time_ns()
+    time_taken = end - start
+    timeList.append(time_taken)
+    print("Shortest distances from node", source_node, "to all nodes:")
+    print(shortest_distances)
+    print("Predecessors for shortest path:")
+    print(predecessors)'''
+    print("graph is ", graph)
+   # print(time_taken)
+    list_to_be_appended = []
+    for i in range(len_graph):
+        graph[i].append(0)
+    for i in range(len_graph + 1):
+        list_to_be_appended.append(0)
+    graph.append(list_to_be_appended)
+    print(graph)
+    for i in range(len_graph + 1):
+        for j in range(len_graph + 1):
+            graph[i][j] = 0
+    print("initialise graph is", graph)
+
+

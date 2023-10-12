@@ -98,15 +98,16 @@ def insertion_heap(arr, i):
 def min_heapify(arr, i):  # or fix heap
     l = (2*(i+1)) - 1  # left child
     r = (2*(i+1))  # right child
-    if l >= len(arr) or r >= len(arr):  # if we are at the leaves, return immediately
-        return
 
-    if arr[l][1] < arr[r][1]:
+    if l < len(arr) and arr[l][1] < arr[i][1]:
         smallest = l
     else:
+        smallest = i
+
+    if r < len(arr) and arr[r][1] < arr[smallest][1]:
         smallest = r
 
-    if arr[smallest][1] < arr[i][1]:
+    if smallest != i:
         temp = arr[i]
         arr[i] = arr[smallest]
         arr[smallest] = temp
@@ -135,39 +136,49 @@ def return_index(dist, v):
 
 # DIJKSTRA'S ALGORITHM
 def dijkstra(num_vertices, source, destination, adjacency_list):
+    distH = []
     dist = []
     prev = []  # or parent pointer
     S = []  # for exploration
     limit_bound = 999999999
     for i in range(0, num_vertices):
-        dist[i] = [i+1, limit_bound]
-        prev[i] = None
+        distH.append([i+1, limit_bound])
+        dist.append(limit_bound)
+        prev.append(None)
 
-    dist[source - 1][1] = 0
-    build_a_min_heap(dist)
+    dist[source - 1] = 0
+    distH[source - 1][1] = 0
+    prev[0] = 0
+    build_a_min_heap(distH)
     while num_vertices - len(S) > 0:
-        u = extract_min(dist)
+        dist_u = distH[0][1]
+        u = extract_min(distH)
         S.append(u)
         if u == destination:
             break
-        dist_u = return_distance(dist, u)
         for i in range(0, adjacency_list[u-1].sizeofLL()):
-            v = adjacency_list[u-1].returnValueatIndex(i)
-            v_index = S.index(u) if u in S else -1  # exception handling
+            v = (adjacency_list[u-1].returnValueatIndex(i))[0]
+            v_index = S.index(v) if v in S else -1  # exception handling
 
-            v_dist_index = return_index(dist, v)
-            weight_u_v = adjacency_list[v-1].findWeight(v)
-            if v_index == -1 and dist_u + weight_u_v < dist[v_dist_index][1]:
-                dist[v_dist_index][1] = dist_u + weight_u_v
-                prev[v-1] = u
-                insertion_heap(dist, v_dist_index)
-    print("distance from {} to {}: ".format(source, destination) + return_distance(dist, destination))
-    print("Shortest path:")
-    k = destination
-    while k != source:
-        print("{} -> ".format(prev[k]), end="")
+            v_dist_index = return_index(distH, v)
+            weight_u_v = adjacency_list[u-1].findWeight(v)
+            if v_index == -1 and dist_u + weight_u_v < distH[v_dist_index][1]:
+                distH[v_dist_index][1] = dist_u + weight_u_v
+                dist[v-1] = dist_u + weight_u_v
+                prev[v-1] = u-1
+                insertion_heap(distH, v_dist_index)
+    print("distance from {} to {}: ".format(source, destination), end="")
+    print(dist[destination-1])
+    print("Reverse shortest path:")
+    k = destination - 1
+    print(destination, end="")
+    print(" -> ", end="")
+    while k != source-1:
+        print("{} -> ".format(prev[k] + 1), end="")
         k = prev[k]
 
 
 # ================MAIN==================
-dijkstra(number_vertices, 1, 3, adjacency_list)
+source = int(input("Source: "))
+destination = int(input("Destination: "))
+dijkstra(number_vertices, source, destination, adjacency_list)

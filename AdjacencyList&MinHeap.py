@@ -16,6 +16,10 @@ class GraphB:
         self.adjList[second_node].append([first_node, weight])
 
     def generate_random_graph_edges_per_vertex(self, num_edges_per_vertex):
+        #increase number of edges for each graph eact time
+        #1st run will have 1 edge for all vertices
+        #2nd run will have 2 edge for all vertices
+        #3rd run will have 3 edge for all vertices
         for v in range(self.V):
             for i in range(1, num_edges_per_vertex+1):
                 u = random.randint(0, self.V-1)
@@ -75,7 +79,7 @@ class GraphB:
 def time_wrt_edges():
     num_of_vertices = 500
     edges_per_vertex = []
-    for x in range (300):
+    for x in range (500):
         edges_per_vertex.append(x+1)
     execution_time = []
 
@@ -94,16 +98,41 @@ def time_wrt_edges():
     plt.ylabel("Time taken")
     plt.show()
 
+def time_wrt_edges_2():
+    num_of_vertices = 500
+    edges_per_vertex = []
+    for x in range (500):
+        edges_per_vertex.append(x+1)
+    execution_time = []
+
+    for i in edges_per_vertex:
+        print("measure time taken for graph with edges " + str(i))
+        total_time = 0.000000000
+        for x in range(100):
+            graph = GraphB(num_of_vertices)
+            graph.generate_random_graph_total_edges(i)
+            start_time = timer()
+            graph.Dijkstra(0)
+            end_time = timer()
+            total_time += end_time-start_time
+        execution_time.append(total_time/50)
+
+    plt.plot(edges_per_vertex, execution_time, label='constanct |V| = 500')
+    plt.title("time taken with respect to number of edges")
+    plt.xlabel("Number of edges")
+    plt.ylabel("Time taken")
+    plt.show()
+
 
 def time_wrt_vertices():
     num_of_vertices = []
-    for x in range(2, 500+3):
+    for x in range(2, 100):
         num_of_vertices.append(x)
     execution_time = []
 
     for i in num_of_vertices:
         print("measure time taken for graph with vertices " + str(i))
-        graph = GraphB(300)
+        graph = GraphB(i)
         graph.generate_random_graph_total_edges((i*(i-1))/2)
         start_time = timer()
         graph.Dijkstra(0)
@@ -115,3 +144,4 @@ def time_wrt_vertices():
     plt.xlabel("Number of vertices")
     plt.ylabel("Time taken")
     plt.show()
+
